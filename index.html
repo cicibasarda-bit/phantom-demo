@@ -1,0 +1,3222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Phantom Demo Wallet</title>
+
+<style>
+:root{
+    --bg:#07060b;
+    --surface:#121019;
+    --surface2:#191522;
+    --purple:#a875ff;
+    --purple2:#6736d8;
+    --green:#45e3a0;
+    --red:#ff587a;
+    --cyan:#63e7ff;
+    --text:#fff;
+    --muted:#918b9c;
+    --line:rgba(255,255,255,.075);
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+body{
+    min-height:100vh;
+    overflow-x:hidden;
+    color:var(--text);
+    background:
+        radial-gradient(
+            circle at 50% -15%,
+            #49216e 0,
+            #171021 28%,
+            #07060b 68%
+        );
+}
+
+button,input{
+    font:inherit;
+}
+
+button{
+    border:0;
+    color:white;
+    cursor:pointer;
+}
+
+.app{
+    width:100%;
+    max-width:500px;
+    min-height:100vh;
+    margin:auto;
+    padding-bottom:95px;
+}
+
+/* HEADER */
+
+.header{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 20px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:20px;
+    font-weight:850;
+}
+
+.ghost{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    border-radius:12px;
+    background:linear-gradient(
+        135deg,
+        #c38dff,
+        #6030d1
+    );
+    box-shadow:
+        0 0 30px rgba(160,100,255,.4);
+}
+
+.header-button{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:rgba(255,255,255,.07);
+    border:1px solid var(--line);
+}
+
+/* PAGES */
+
+.page{
+    display:none;
+    min-height:calc(100vh - 70px);
+    padding:0 20px;
+}
+
+.page.active{
+    display:block;
+    animation:pageIn .25s ease;
+}
+
+@keyframes pageIn{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+/* WALLET */
+
+.balance-card{
+    text-align:center;
+    padding:23px 0;
+}
+
+.label{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.balance{
+    margin:6px 0;
+    color:var(--green);
+    font-size:43px;
+    line-height:1.1;
+    font-weight:850;
+    letter-spacing:-1.5px;
+}
+
+.change{
+    color:var(--green);
+    font-size:13px;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+    margin-bottom:18px;
+}
+
+.action{
+    padding:12px 3px;
+    border-radius:18px;
+    background:rgba(255,255,255,.055);
+    border:1px solid var(--line);
+}
+
+.action-circle{
+    width:40px;
+    height:40px;
+    display:grid;
+    place-items:center;
+    margin:0 auto 6px;
+    border-radius:50%;
+    background:linear-gradient(
+        135deg,
+        #aa78ff,
+        #6333d4
+    );
+}
+
+.action small{
+    color:#ddd;
+}
+
+.panel{
+    margin-bottom:15px;
+    padding:18px;
+    border-radius:25px;
+    background:
+        linear-gradient(
+            145deg,
+            #21182e,
+            #101017
+        );
+    border:1px solid var(--line);
+}
+
+.portfolio-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.portfolio-value{
+    margin-top:4px;
+    font-size:25px;
+    font-weight:850;
+}
+
+.portfolio-chart{
+    width:100%;
+    height:100px;
+    margin-top:12px;
+}
+
+/* MARKET */
+
+.title{
+    margin:12px 0 18px;
+    font-size:28px;
+    font-weight:850;
+}
+
+.search{
+    width:100%;
+    padding:14px 16px;
+    margin-bottom:8px;
+    color:white;
+    background:#15131d;
+    border:1px solid var(--line);
+    border-radius:16px;
+    outline:none;
+}
+
+.coin{
+    min-height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 2px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    cursor:pointer;
+    transition:.15s;
+}
+
+.coin:active{
+    transform:scale(.985);
+}
+
+.coin-left{
+    min-width:120px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+.coin-logo{
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#222;
+}
+
+.coin-name{
+    font-weight:750;
+}
+
+.coin-symbol{
+    margin-top:3px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.coin-chart-small{
+    width:75px;
+    height:35px;
+}
+
+.coin-price{
+    min-width:82px;
+    text-align:right;
+    font-weight:700;
+}
+
+.up{
+    color:var(--green);
+    font-size:12px;
+}
+
+.down{
+    color:var(--red);
+    font-size:12px;
+}
+
+/* COIN SCREEN */
+
+#coinPage{
+    padding:0;
+}
+
+.coin-screen{
+    min-height:calc(100vh - 70px);
+    padding:0 20px 30px;
+}
+
+.coin-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:3px 0 15px;
+}
+
+.back,
+.star{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:rgba(255,255,255,.07);
+    border:1px solid var(--line);
+}
+
+.coin-heading{
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+.coin-heading img{
+    width:43px;
+    height:43px;
+    border-radius:50%;
+}
+
+.coin-heading-name{
+    font-size:19px;
+    font-weight:850;
+}
+
+.coin-heading-symbol{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.big-price{
+    margin-top:5px;
+    font-size:37px;
+    font-weight:850;
+    letter-spacing:-1px;
+}
+
+.big-change{
+    margin-top:5px;
+    font-size:14px;
+}
+
+/* MAIN CHART */
+
+.chart-wrap{
+    position:relative;
+    margin:8px -4px 0;
+}
+
+.main-chart{
+    width:100%;
+    height:315px;
+    display:block;
+}
+
+.chart-price-line{
+    position:absolute;
+    right:0;
+    height:1px;
+    width:100%;
+    pointer-events:none;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(168,117,255,.55)
+    );
+    opacity:.35;
+}
+
+.ranges{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:4px;
+    padding:5px;
+    border-radius:15px;
+    background:#121019;
+    border:1px solid var(--line);
+}
+
+.range{
+    padding:9px 2px;
+    border-radius:10px;
+    color:var(--muted);
+    background:transparent;
+    font-size:12px;
+    font-weight:750;
+}
+
+.range.active{
+    color:white;
+    background:#2b203d;
+}
+
+/* TRADING */
+
+.trade-card{
+    margin-top:17px;
+    padding:17px;
+    border-radius:23px;
+    background:#121019;
+    border:1px solid var(--line);
+}
+
+.trade-tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px;
+    padding:4px;
+    border-radius:15px;
+    background:#0c0b10;
+}
+
+.trade-tab{
+    padding:12px;
+    border-radius:11px;
+    color:var(--muted);
+    background:transparent;
+    font-weight:850;
+}
+
+.trade-tab.buy-active{
+    color:#05130b;
+    background:var(--green);
+}
+
+.trade-tab.sell-active{
+    background:var(--red);
+    color:white;
+}
+
+.amount-box{
+    margin-top:13px;
+    padding:15px;
+    border-radius:17px;
+    background:#191621;
+    border:1px solid var(--line);
+}
+
+.amount-label{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.amount-input{
+    width:100%;
+    margin-top:5px;
+    color:white;
+    background:transparent;
+    border:0;
+    outline:0;
+    font-size:28px;
+    font-weight:850;
+}
+
+.max{
+    float:right;
+    margin-top:-34px;
+    padding:6px 9px;
+    border-radius:8px;
+    color:var(--purple);
+    background:rgba(168,121,255,.12);
+    font-size:10px;
+    font-weight:850;
+}
+
+.preview{
+    padding:10px 0;
+}
+
+.preview-row{
+    display:flex;
+    justify-content:space-between;
+    padding:6px 0;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.preview-row strong{
+    color:white;
+}
+
+.trade-button{
+    width:100%;
+    padding:16px;
+    border-radius:17px;
+    font-size:16px;
+    font-weight:850;
+}
+
+.trade-button.buy{
+    color:#06120b;
+    background:linear-gradient(
+        135deg,
+        #54efaa,
+        #2dcc89
+    );
+}
+
+.trade-button.sell{
+    background:linear-gradient(
+        135deg,
+        #ff6684,
+        #e53d62
+    );
+}
+
+.holding-info{
+    margin-top:12px;
+    color:var(--muted);
+    text-align:center;
+    font-size:12px;
+}
+
+/* NAV */
+
+.nav{
+    position:fixed;
+    z-index:50;
+    left:50%;
+    bottom:13px;
+    transform:translateX(-50%);
+    width:calc(100% - 28px);
+    max-width:470px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    padding:8px;
+    border:1px solid var(--line);
+    border-radius:23px;
+    background:rgba(18,16,26,.92);
+    backdrop-filter:blur(22px);
+}
+
+.nav button{
+    padding:8px 0;
+    color:#777282;
+    background:transparent;
+}
+
+.nav button.active{
+    color:var(--purple);
+}
+
+.nav span{
+    display:block;
+    margin-top:3px;
+    font-size:11px;
+}
+
+/* SETTINGS / ADMIN */
+
+.admin-box{
+    padding:20px;
+    border-radius:24px;
+    background:linear-gradient(
+        145deg,
+        #26183c,
+        #111017
+    );
+    border:1px solid rgba(168,121,255,.2);
+}
+
+.admin-balance{
+    margin:6px 0 17px;
+    color:var(--green);
+    font-size:30px;
+    font-weight:850;
+}
+
+.input{
+    width:100%;
+    padding:14px;
+    margin-bottom:9px;
+    color:white;
+    background:#1a1724;
+    border:1px solid var(--line);
+    border-radius:15px;
+    outline:none;
+}
+
+.admin-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.admin-btn{
+    padding:14px;
+    border-radius:14px;
+    background:#252130;
+}
+
+.add{
+    color:var(--green);
+    background:rgba(67,227,155,.1);
+}
+
+.remove{
+    color:var(--red);
+    background:rgba(255,92,122,.1);
+}
+
+.set{
+    grid-column:1/-1;
+    color:var(--purple);
+    background:rgba(168,121,255,.1);
+}
+
+/* MODAL */
+
+.overlay{
+    position:fixed;
+    z-index:100;
+    inset:0;
+    display:none;
+    align-items:flex-end;
+    background:rgba(0,0,0,.76);
+    backdrop-filter:blur(10px);
+}
+
+.overlay.show{
+    display:flex;
+}
+
+.modal{
+    width:100%;
+    max-width:500px;
+    margin:auto;
+    padding:24px;
+    border-radius:28px 28px 0 0;
+    background:#121019;
+    border:1px solid var(--line);
+}
+
+.primary,
+.close{
+    width:100%;
+    padding:15px;
+    border-radius:16px;
+    font-weight:800;
+}
+
+.primary{
+    background:linear-gradient(
+        135deg,
+        #a879ff,
+        #683bd8
+    );
+}
+
+.close{
+    margin-top:9px;
+    background:#252230;
+}
+
+.activity-empty{
+    padding:30px;
+    text-align:center;
+    color:var(--muted);
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    z-index:200;
+    top:18px;
+    left:50%;
+    padding:13px 18px;
+    border-radius:14px;
+    background:#252031;
+    border:1px solid var(--line);
+    transform:translate(-50%,-100px);
+    transition:.25s;
+}
+
+.toast.show{
+    transform:translate(-50%,0);
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+
+    <div class="brand">
+        <div class="ghost">👻</div>
+        Phantom
+    </div>
+
+    <button
+        class="header-button"
+        onclick="openAdmin()">
+        ⚙
+    </button>
+
+</header>
+
+
+<!-- WALLET -->
+
+<section id="home" class="page active">
+
+    <div class="balance-card">
+
+        <div class="label">
+            Wallet balance
+        </div>
+
+        <div
+            id="balance"
+            class="balance">
+            $0.00
+        </div>
+
+        <div class="change">
+            +2.41% today
+        </div>
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+            class="action"
+            onclick="openSend()">
+
+            <div class="action-circle">
+                ↑
+            </div>
+
+            <small>Send</small>
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="openReceive()">
+
+            <div class="action-circle">
+                ↓
+            </div>
+
+            <small>Receive</small>
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="showPage('market')">
+
+            <div class="action-circle">
+                ↗
+            </div>
+
+            <small>Buy</small>
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="showPage('market')">
+
+            <div class="action-circle">
+                ◈
+            </div>
+
+            <small>Swap</small>
+
+        </button>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="portfolio-top">
+
+            <div>
+
+                <div class="label">
+                    Portfolio
+                </div>
+
+                <div
+                    id="portfolioValue"
+                    class="portfolio-value">
+                    $0.00
+                </div>
+
+            </div>
+
+            <div class="up">
+                +4.82%
+            </div>
+
+        </div>
+
+        <canvas
+            id="portfolioChart"
+            class="portfolio-chart">
+        </canvas>
+
+    </div>
+
+
+    <h3 style="margin:20px 0 10px">
+        Your assets
+    </h3>
+
+    <div id="portfolio"></div>
+
+</section>
+
+
+<!-- MARKET -->
+
+<section id="market" class="page">
+
+    <h1 class="title">
+        Market
+    </h1>
+
+    <input
+        id="search"
+        class="search"
+        placeholder="Search coins..."
+        oninput="renderMarket()">
+
+    <div id="marketList"></div>
+
+</section>
+
+
+<!-- COIN -->
+
+<section id="coinPage" class="page">
+
+    <div class="coin-screen">
+
+        <div class="coin-header">
+
+            <button
+                class="back"
+                onclick="closeCoinPage()">
+                ←
+            </button>
+
+            <div
+                id="coinHeading"
+                class="coin-heading">
+            </div>
+
+            <button
+                class="star"
+                onclick="toast('Added to watchlist')">
+                ☆
+            </button>
+
+        </div>
+
+
+        <div
+            id="coinBigPrice"
+            class="big-price">
+            $0.00
+        </div>
+
+        <div
+            id="coinBigChange"
+            class="big-change up">
+            +0.00%
+        </div>
+
+
+        <div class="chart-wrap">
+
+            <canvas
+                id="mainChart"
+                class="main-chart">
+            </canvas>
+
+        </div>
+
+
+        <div class="ranges">
+
+            <button
+                class="range"
+                onclick="setRange('1H',this)">
+                1H
+            </button>
+
+            <button
+                class="range active"
+                onclick="setRange('1D',this)">
+                1D
+            </button>
+
+            <button
+                class="range"
+                onclick="setRange('1W',this)">
+                1W
+            </button>
+
+            <button
+                class="range"
+                onclick="setRange('1M',this)">
+                1M
+            </button>
+
+            <button
+                class="range"
+                onclick="setRange('1Y',this)">
+                1Y
+            </button>
+
+        </div>
+
+
+        <div class="trade-card">
+
+            <div class="trade-tabs">
+
+                <button
+                    id="buyTab"
+                    class="trade-tab buy-active"
+                    onclick="setTradeMode('buy')">
+                    Buy
+                </button>
+
+                <button
+                    id="sellTab"
+                    class="trade-tab"
+                    onclick="setTradeMode('sell')">
+                    Sell
+                </button>
+
+            </div>
+
+
+            <div class="amount-box">
+
+                <div class="amount-label">
+                    Amount in USD
+                </div>
+
+                <input
+                    id="tradeAmount"
+                    class="amount-input"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    oninput="updateTradePreview()">
+
+                <button
+                    class="max"
+                    onclick="setMaxTrade()">
+                    MAX
+                </button>
+
+            </div>
+
+
+            <div class="preview">
+
+                <div class="preview-row">
+                    <span>Price</span>
+                    <strong id="tradePrice">$0.00</strong>
+                </div>
+
+                <div class="preview-row">
+                    <span>Available</span>
+                    <strong id="available">$0.00</strong>
+                </div>
+
+                <div class="preview-row">
+                    <span>You receive</span>
+                    <strong id="receive">0</strong>
+                </div>
+
+            </div>
+
+
+            <button
+                id="tradeButton"
+                class="trade-button buy"
+                onclick="executeTrade()">
+                Buy
+            </button>
+
+
+            <div
+                id="holdingInfo"
+                class="holding-info">
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ACTIVITY -->
+
+<section id="activity" class="page">
+
+    <h1 class="title">
+        Activity
+    </h1>
+
+    <div id="activityList"></div>
+
+</section>
+
+
+<!-- SETTINGS -->
+
+<section id="settings" class="page">
+
+    <h1 class="title">
+        Settings
+    </h1>
+
+    <div class="panel">
+
+        <h3>Wallet</h3>
+
+        <p style="
+            color:var(--muted);
+            line-height:1.5;
+            margin-top:8px;
+        ">
+            This interface is a simulated wallet.
+            It does not connect to a blockchain or
+            transfer real cryptocurrency.
+        </p>
+
+    </div>
+
+    <button
+        class="close"
+        onclick="openAdmin()">
+        Demo Admin Panel
+    </button>
+
+</section>
+
+
+<!-- NAV -->
+
+<nav class="nav">
+
+    <button
+        class="active"
+        onclick="showPage('home',this)">
+        ◉
+        <span>Wallet</span>
+    </button>
+
+    <button
+        onclick="showPage('market',this)">
+        ◈
+        <span>Market</span>
+    </button>
+
+    <button
+        onclick="showPage('activity',this)">
+        ◷
+        <span>Activity</span>
+    </button>
+
+    <button
+        onclick="showPage('settings',this)">
+        ⚙
+        <span>Settings</span>
+    </button>
+
+</nav>
+
+</div>
+
+
+<div
+    id="overlay"
+    class="overlay">
+
+    <div
+        id="modal"
+        class="modal">
+    </div>
+
+</div>
+
+
+<div
+    id="toast"
+    class="toast">
+</div>
+
+
+<script>
+
+/* =========================================================
+   COINS
+========================================================= */
+
+const coins=[
+    {
+        id:"sol",
+        name:"Solana",
+        symbol:"SOL",
+        price:145.20,
+        logo:"https://cryptologos.cc/logos/solana-sol-logo.png"
+    },
+    {
+        id:"btc",
+        name:"Bitcoin",
+        symbol:"BTC",
+        price:68420.50,
+        logo:"https://cryptologos.cc/logos/bitcoin-btc-logo.png"
+    },
+    {
+        id:"eth",
+        name:"Ethereum",
+        symbol:"ETH",
+        price:2518.35,
+        logo:"https://cryptologos.cc/logos/ethereum-eth-logo.png"
+    },
+    {
+        id:"usdc",
+        name:"USD Coin",
+        symbol:"USDC",
+        price:1,
+        logo:"https://cryptologos.cc/logos/usd-coin-usdc-logo.png"
+    },
+    {
+        id:"xrp",
+        name:"XRP",
+        symbol:"XRP",
+        price:2.41,
+        logo:"https://cryptologos.cc/logos/xrp-xrp-logo.png"
+    },
+    {
+        id:"doge",
+        name:"Dogecoin",
+        symbol:"DOGE",
+        price:.23,
+        logo:"https://cryptologos.cc/logos/dogecoin-doge-logo.png"
+    }
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let holdings=
+    JSON.parse(
+        localStorage.getItem("phantomDemoHoldings")
+    )||{};
+
+let activities=
+    JSON.parse(
+        localStorage.getItem("phantomDemoActivities")
+    )||{};
+
+const ADMIN_CODE="DEMO-ADMIN-2026";
+
+let selectedCoin=null;
+let selectedRange="1D";
+let tradeMode="buy";
+
+
+/* =========================================================
+   MONEY
+========================================================= */
+
+function money(value){
+
+    return "$"+
+        Number(value).toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+
+}
+
+
+function getBalance(){
+
+    return Number(
+        localStorage.getItem(
+            "phantomDemoBalance"
+        )
+    )||0;
+
+}
+
+
+function setBalance(value){
+
+    localStorage.setItem(
+        "phantomDemoBalance",
+        Math.max(0,value).toFixed(2)
+    );
+
+    updateUI();
+
+}
+
+
+/* =========================================================
+   REAL-TIME-STYLE PRICE ENGINE
+========================================================= */
+
+/*
+   Each coin receives its own smooth random-walk history.
+
+   This is NOT real market data. It is deliberately designed
+   to look and move like a continuously updating market feed.
+*/
+
+function createHistory(start,count=220){
+
+    const result=[];
+
+    let value=start;
+
+    for(let i=0;i<count;i++){
+
+        /*
+           Small correlated movement.
+           This creates smoother trends instead of
+           every point being completely random.
+        */
+
+        const noise=
+            (Math.random()-.5)*0.0018;
+
+        value*=
+            1+noise;
+
+        result.push(value);
+
+    }
+
+    return result;
+
+}
+
+
+coins.forEach(coin=>{
+
+    coin.history=
+        createHistory(
+            coin.price
+        );
+
+    coin.velocity=0;
+
+});
+
+
+/*
+   Slow live tick.
+
+   900ms makes the movement noticeably slower than
+   the previous version while still feeling live.
+*/
+
+setInterval(()=>{
+
+    coins.forEach(coin=>{
+
+        /*
+           Momentum makes consecutive movements related.
+        */
+
+        const impulse=
+            (Math.random()-.5)*0.00038;
+
+        coin.velocity=
+            coin.velocity*.92+
+            impulse;
+
+
+        /*
+           Prevent unrealistic jumps.
+        */
+
+        coin.velocity=
+            Math.max(
+                -.0012,
+                Math.min(
+                    .0012,
+                    coin.velocity
+                )
+            );
+
+
+        const previous=
+            coin.history[
+                coin.history.length-1
+            ];
+
+
+        const next=
+            previous*
+            (1+coin.velocity);
+
+
+        coin.history.push(next);
+
+
+        if(
+            coin.history.length>260
+        ){
+
+            coin.history.shift();
+
+        }
+
+
+        coin.price=next;
+
+    });
+
+
+    refreshVisibleMarket();
+
+},900);
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showPage(id,button){
+
+    document
+        .querySelectorAll(".page")
+        .forEach(page=>{
+            page.classList.remove("active");
+        });
+
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+
+    document
+        .querySelectorAll(".nav button")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+
+    if(button){
+
+        button.classList.add("active");
+
+    }else{
+
+        const index=[
+            "home",
+            "market",
+            "activity",
+            "settings"
+        ].indexOf(id);
+
+        const buttons=
+            document.querySelectorAll(
+                ".nav button"
+            );
+
+        if(buttons[index]){
+            buttons[index].classList.add("active");
+        }
+
+    }
+
+
+    if(id==="market"){
+        renderMarket();
+    }
+
+    if(id==="activity"){
+        renderActivity();
+    }
+
+    if(id==="home"){
+        updateUI();
+    }
+
+}
+
+
+/* =========================================================
+   MARKET
+========================================================= */
+
+function renderMarket(){
+
+    const list=
+        document.getElementById(
+            "marketList"
+        );
+
+    const query=
+        (
+            document.getElementById(
+                "search"
+            )?.value||""
+        ).toLowerCase();
+
+
+    const visible=
+        coins.filter(coin=>
+            coin.name.toLowerCase().includes(query)||
+            coin.symbol.toLowerCase().includes(query)
+        );
+
+
+    list.innerHTML=
+        visible.map(coin=>`
+
+            <div
+                class="coin"
+                onclick="openCoinPage('${coin.id}')">
+
+                <div class="coin-left">
+
+                    <img
+                        class="coin-logo"
+                        src="${coin.logo}">
+
+                    <div>
+
+                        <div class="coin-name">
+                            ${coin.name}
+                        </div>
+
+                        <div class="coin-symbol">
+                            ${coin.symbol}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <canvas
+                    id="small-${coin.id}"
+                    class="coin-chart-small">
+                </canvas>
+
+
+                <div
+                    id="market-price-${coin.id}"
+                    class="coin-price">
+                </div>
+
+            </div>
+
+        `).join("");
+
+
+    visible.forEach(coin=>{
+
+        drawSmallChart(coin);
+        updateMarketPrice(coin);
+
+    });
+
+}
+
+
+function refreshVisibleMarket(){
+
+    const market=
+        document.getElementById(
+            "market"
+        );
+
+
+    if(
+        market.classList.contains("active")
+    ){
+
+        coins.forEach(coin=>{
+
+            drawSmallChart(coin);
+            updateMarketPrice(coin);
+
+        });
+
+    }
+
+
+    /*
+       Keep the selected coin live.
+    */
+
+    if(
+        selectedCoin &&
+        document
+            .getElementById("coinPage")
+            .classList
+            .contains("active")
+    ){
+
+        renderLiveCoin();
+
+    }
+
+
+    /*
+       Portfolio values change as the simulated
+       market changes.
+    */
+
+    updateUI();
+
+}
+
+
+function updateMarketPrice(coin){
+
+    const el=
+        document.getElementById(
+            `market-price-${coin.id}`
+        );
+
+    if(!el)return;
+
+
+    const old=
+        coin.history[
+            Math.max(
+                0,
+                coin.history.length-35
+            )
+        ];
+
+
+    const percent=
+        ((coin.price-old)/old)*100;
+
+
+    el.innerHTML=`
+
+        <div>
+            ${money(coin.price)}
+        </div>
+
+        <div class="${percent>=0?"up":"down"}">
+            ${percent>=0?"+":""}
+            ${percent.toFixed(2)}%
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   SMALL CHART
+========================================================= */
+
+function drawSmallChart(coin){
+
+    const canvas=
+        document.getElementById(
+            `small-${coin.id}`
+        );
+
+    if(!canvas)return;
+
+
+    const width=canvas.clientWidth;
+    const height=canvas.clientHeight;
+    const ratio=devicePixelRatio||1;
+
+
+    canvas.width=
+        width*ratio;
+
+    canvas.height=
+        height*ratio;
+
+
+    const ctx=
+        canvas.getContext("2d");
+
+
+    ctx.setTransform(
+        ratio,0,0,ratio,0,0
+    );
+
+
+    const data=
+        coin.history.slice(-45);
+
+
+    const min=Math.min(...data);
+    const max=Math.max(...data);
+    const range=max-min||1;
+
+
+    ctx.clearRect(
+        0,0,width,height
+    );
+
+
+    ctx.beginPath();
+
+
+    data.forEach((value,i)=>{
+
+        const x=
+            i/(data.length-1)*
+            width;
+
+
+        const y=
+            height-
+            ((value-min)/range)*
+            height*.72-
+            height*.12;
+
+
+        if(i===0)
+            ctx.moveTo(x,y);
+        else
+            ctx.lineTo(x,y);
+
+    });
+
+
+    ctx.strokeStyle="#a879ff";
+    ctx.lineWidth=2;
+    ctx.lineCap="round";
+    ctx.shadowBlur=5;
+    ctx.shadowColor="#8d5cff";
+
+    ctx.stroke();
+
+}
+
+
+/* =========================================================
+   COIN SCREEN
+========================================================= */
+
+function openCoinPage(id){
+
+    selectedCoin=
+        coins.find(
+            coin=>coin.id===id
+        );
+
+
+    selectedRange="1D";
+    tradeMode="buy";
+
+
+    document
+        .querySelectorAll(".page")
+        .forEach(page=>{
+            page.classList.remove("active");
+        });
+
+
+    document
+        .getElementById("coinPage")
+        .classList.add("active");
+
+
+    document
+        .querySelectorAll(".nav button")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+
+    renderCoinScreen();
+
+}
+
+
+function closeCoinPage(){
+
+    showPage("market");
+
+}
+
+
+function renderCoinScreen(){
+
+    if(!selectedCoin)return;
+
+
+    const coin=selectedCoin;
+
+
+    document.getElementById(
+        "coinHeading"
+    ).innerHTML=`
+
+        <img src="${coin.logo}">
+
+        <div>
+
+            <div class="coin-heading-name">
+                ${coin.name}
+            </div>
+
+            <div class="coin-heading-symbol">
+                ${coin.symbol}
+            </div>
+
+        </div>
+
+    `;
+
+
+    renderLiveCoin();
+
+
+    document
+        .querySelectorAll(".range")
+        .forEach(button=>{
+
+            button.classList.toggle(
+                "active",
+                button.textContent===selectedRange
+            );
+
+        });
+
+
+    requestAnimationFrame(
+        drawMainChart
+    );
+
+}
+
+
+function getRangeCount(){
+
+    switch(selectedRange){
+
+        case "1H":
+            return 60;
+
+        case "1D":
+            return 115;
+
+        case "1W":
+            return 150;
+
+        case "1M":
+            return 190;
+
+        case "1Y":
+            return 230;
+
+        default:
+            return 115;
+
+    }
+
+}
+
+
+function renderLiveCoin(){
+
+    if(!selectedCoin)return;
+
+
+    const coin=selectedCoin;
+
+
+    document.getElementById(
+        "coinBigPrice"
+    ).textContent=
+        money(coin.price);
+
+
+    document.getElementById(
+        "tradePrice"
+    ).textContent=
+        money(coin.price);
+
+
+    updateBigChange();
+    updateTradePreview();
+    drawMainChart();
+
+}
+
+
+/* =========================================================
+   MAIN CHART
+========================================================= */
+
+function drawMainChart(){
+
+    if(!selectedCoin)return;
+
+
+    const canvas=
+        document.getElementById(
+            "mainChart"
+        );
+
+
+    if(!canvas)return;
+
+
+    const width=
+        canvas.clientWidth;
+
+    const height=
+        canvas.clientHeight;
+
+    const ratio=
+        devicePixelRatio||1;
+
+
+    canvas.width=
+        width*ratio;
+
+    canvas.height=
+        height*ratio;
+
+
+    const ctx=
+        canvas.getContext("2d");
+
+
+    ctx.setTransform(
+        ratio,0,0,ratio,0,0
+    );
+
+
+    const data=
+        selectedCoin.history.slice(
+            -getRangeCount()
+        );
+
+
+    const min=
+        Math.min(...data);
+
+    const max=
+        Math.max(...data);
+
+    const range=
+        max-min||1;
+
+
+    ctx.clearRect(
+        0,0,width,height
+    );
+
+
+    /*
+       Grid.
+    */
+
+    ctx.strokeStyle=
+        "rgba(255,255,255,.045)";
+
+    ctx.lineWidth=1;
+
+
+    for(let i=1;i<6;i++){
+
+        const y=
+            i/6*height;
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,y);
+        ctx.lineTo(width,y);
+
+        ctx.stroke();
+
+    }
+
+
+    /*
+       Points.
+    */
+
+    const points=
+        data.map((value,i)=>({
+
+            x:
+                i/(data.length-1)*
+                width,
+
+            y:
+                height-
+                ((value-min)/range)*
+                height*.72-
+                height*.10
+
+        }));
+
+
+    /*
+       Gradient area.
+    */
+
+    ctx.beginPath();
+
+
+    points.forEach((point,i)=>{
+
+        if(i===0)
+            ctx.moveTo(point.x,point.y);
+        else
+            ctx.lineTo(point.x,point.y);
+
+    });
+
+
+    ctx.lineTo(width,height);
+    ctx.lineTo(0,height);
+    ctx.closePath();
+
+
+    const area=
+        ctx.createLinearGradient(
+            0,0,0,height
+        );
+
+
+    area.addColorStop(
+        0,
+        "rgba(168,121,255,.22)"
+    );
+
+
+    area.addColorStop(
+        .7,
+        "rgba(168,121,255,.035)"
+    );
+
+
+    area.addColorStop(
+        1,
+        "rgba(168,121,255,0)"
+    );
+
+
+    ctx.fillStyle=area;
+    ctx.fill();
+
+
+    /*
+       Smooth line using quadratic curves.
+    */
+
+    ctx.beginPath();
+
+
+    for(let i=0;i<points.length;i++){
+
+        const point=points[i];
+
+
+        if(i===0){
+
+            ctx.moveTo(
+                point.x,
+                point.y
+            );
+
+        }else{
+
+            const previous=
+                points[i-1];
+
+
+            const midpointX=
+                (
+                    previous.x+
+                    point.x
+                )/2;
+
+
+            const midpointY=
+                (
+                    previous.y+
+                    point.y
+                )/2;
+
+
+            ctx.quadraticCurveTo(
+                previous.x,
+                previous.y,
+                midpointX,
+                midpointY
+            );
+
+        }
+
+    }
+
+
+    const gradient=
+        ctx.createLinearGradient(
+            0,0,width,0
+        );
+
+
+    gradient.addColorStop(
+        0,
+        "#7649ed"
+    );
+
+    gradient.addColorStop(
+        .45,
+        "#b985ff"
+    );
+
+    gradient.addColorStop(
+        1,
+        "#62e6ff"
+    );
+
+
+    ctx.strokeStyle=gradient;
+    ctx.lineWidth=2.6;
+    ctx.lineCap="round";
+    ctx.lineJoin="round";
+
+    ctx.shadowBlur=9;
+    ctx.shadowColor=
+        "rgba(168,121,255,.65)";
+
+    ctx.stroke();
+
+
+    /*
+       Current price point.
+    */
+
+    const last=
+        points[points.length-1];
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        last.x,
+        last.y,
+        4,
+        0,
+        Math.PI*2
+    );
+
+
+    ctx.fillStyle="#fff";
+    ctx.shadowBlur=12;
+    ctx.shadowColor="#a879ff";
+    ctx.fill();
+
+}
+
+
+/* =========================================================
+   RANGES
+========================================================= */
+
+function setRange(range,button){
+
+    selectedRange=range;
+
+
+    document
+        .querySelectorAll(".range")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+
+    button.classList.add("active");
+
+
+    drawMainChart();
+    updateBigChange();
+
+}
+
+
+function updateBigChange(){
+
+    if(!selectedCoin)return;
+
+
+    const data=
+        selectedCoin.history.slice(
+            -getRangeCount()
+        );
+
+
+    const first=data[0];
+    const last=data[data.length-1];
+
+
+    const percent=
+        ((last-first)/first)*100;
+
+
+    const element=
+        document.getElementById(
+            "coinBigChange"
+        );
+
+
+    element.textContent=
+        (percent>=0?"+":"")+
+        percent.toFixed(2)+
+        "%";
+
+
+    element.className=
+        "big-change "+
+        (
+            percent>=0
+                ?"up"
+                :"down"
+        );
+
+}
+
+
+/* =========================================================
+   TRADING
+========================================================= */
+
+function setTradeMode(mode){
+
+    tradeMode=mode;
+
+
+    const buy=
+        document.getElementById(
+            "buyTab"
+        );
+
+    const sell=
+        document.getElementById(
+            "sellTab"
+        );
+
+    const button=
+        document.getElementById(
+            "tradeButton"
+        );
+
+
+    buy.className="trade-tab";
+    sell.className="trade-tab";
+
+
+    if(mode==="buy"){
+
+        buy.className=
+            "trade-tab buy-active";
+
+        button.className=
+            "trade-button buy";
+
+        button.textContent=
+            `Buy ${selectedCoin.symbol}`;
+
+    }else{
+
+        sell.className=
+            "trade-tab sell-active";
+
+        button.className=
+            "trade-button sell";
+
+        button.textContent=
+            `Sell ${selectedCoin.symbol}`;
+
+    }
+
+
+    updateTradePreview();
+
+}
+
+
+function updateTradePreview(){
+
+    if(!selectedCoin)return;
+
+
+    const amount=
+        Number(
+            document.getElementById(
+                "tradeAmount"
+            )?.value
+        )||0;
+
+
+    const tokens=
+        amount/
+        selectedCoin.price;
+
+
+    document.getElementById(
+        "receive"
+    ).textContent=
+        tokens.toFixed(6)+
+        " "+
+        selectedCoin.symbol;
+
+
+    const available=
+        tradeMode==="buy"
+            ?getBalance()
+            :(holdings[selectedCoin.id]||0)*
+             selectedCoin.price;
+
+
+    document.getElementById(
+        "available"
+    ).textContent=
+        money(available);
+
+
+    updateHoldingInfo();
+
+}
+
+
+function updateHoldingInfo(){
+
+    if(!selectedCoin)return;
+
+
+    const owned=
+        holdings[selectedCoin.id]||0;
+
+
+    document.getElementById(
+        "holdingInfo"
+    ).textContent=
+        `You hold ${owned.toFixed(6)} ${selectedCoin.symbol}`;
+
+}
+
+
+function setMaxTrade(){
+
+    const input=
+        document.getElementById(
+            "tradeAmount"
+        );
+
+
+    if(tradeMode==="buy"){
+
+        input.value=
+            getBalance().toFixed(2);
+
+    }else{
+
+        input.value=
+            (
+                (holdings[selectedCoin.id]||0)*
+                selectedCoin.price
+            ).toFixed(2);
+
+    }
+
+
+    updateTradePreview();
+
+}
+
+
+function executeTrade(){
+
+    const amount=
+        Number(
+            document.getElementById(
+                "tradeAmount"
+            ).value
+        );
+
+
+    if(!amount||amount<=0){
+
+        toast("Enter an amount.");
+
+        return;
+
+    }
+
+
+    const coin=selectedCoin;
+
+
+    if(tradeMode==="buy"){
+
+        if(amount>getBalance()){
+
+            toast(
+                "Not enough demo funds."
+            );
+
+            return;
+
+        }
+
+
+        holdings[coin.id]=
+            (holdings[coin.id]||0)+
+            amount/coin.price;
+
+
+        setBalance(
+            getBalance()-amount
+        );
+
+
+        addActivity(
+            `Bought ${coin.symbol}`,
+            amount
+        );
+
+
+        toast(
+            `Bought ${coin.symbol} with demo funds.`
+        );
+
+    }else{
+
+        const value=
+            (holdings[coin.id]||0)*
+            coin.price;
+
+
+        if(amount>value){
+
+            toast(
+                "You don't hold enough."
+            );
+
+            return;
+
+        }
+
+
+        holdings[coin.id]-=
+            amount/coin.price;
+
+
+        setBalance(
+            getBalance()+amount
+        );
+
+
+        addActivity(
+            `Sold ${coin.symbol}`,
+            amount
+        );
+
+
+        toast(
+            `Sold ${coin.symbol}.`
+        );
+
+    }
+
+
+    localStorage.setItem(
+        "phantomDemoHoldings",
+        JSON.stringify(holdings)
+    );
+
+
+    document.getElementById(
+        "tradeAmount"
+    ).value="";
+
+
+    updateUI();
+    renderCoinScreen();
+
+}
+
+
+/* =========================================================
+   PORTFOLIO
+========================================================= */
+
+function updateUI(){
+
+    document.getElementById(
+        "balance"
+    ).textContent=
+        money(getBalance());
+
+
+    let total=0;
+
+
+    Object.keys(holdings)
+        .forEach(id=>{
+
+            const coin=
+                coins.find(
+                    c=>c.id===id
+                );
+
+
+            if(coin){
+
+                total+=
+                    holdings[id]*
+                    coin.price;
+
+            }
+
+        });
+
+
+    document.getElementById(
+        "portfolioValue"
+    ).textContent=
+        money(total);
+
+
+    renderPortfolio();
+
+}
+
+
+function renderPortfolio(){
+
+    const container=
+        document.getElementById(
+            "portfolio"
+        );
+
+
+    let html="";
+
+
+    Object.keys(holdings)
+        .forEach(id=>{
+
+            if(holdings[id]<=0)return;
+
+
+            const coin=
+                coins.find(
+                    c=>c.id===id
+                );
+
+
+            if(!coin)return;
+
+
+            const value=
+                holdings[id]*
+                coin.price;
+
+
+            html+=`
+
+                <div class="coin">
+
+                    <div class="coin-left">
+
+                        <img
+                            class="coin-logo"
+                            src="${coin.logo}">
+
+                        <div>
+
+                            <div class="coin-name">
+                                ${coin.name}
+                            </div>
+
+                            <div class="coin-symbol">
+                                ${holdings[id].toFixed(6)}
+                                ${coin.symbol}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="coin-price">
+                        ${money(value)}
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+    container.innerHTML=
+        html ||
+        `
+            <div class="panel">
+
+                <div class="label">
+                    Your portfolio is empty.
+                    Open Market to simulate a purchase.
+                </div>
+
+            </div>
+        `;
+
+}
+
+
+/* =========================================================
+   ACTIVITY
+========================================================= */
+
+function addActivity(type,amount){
+
+    activities.unshift({
+
+        type,
+        amount,
+        time:new Date().toLocaleString()
+
+    });
+
+
+    activities=
+        activities.slice(0,50);
+
+
+    localStorage.setItem(
+        "phantomDemoActivities",
+        JSON.stringify(activities)
+    );
+
+}
+
+
+function renderActivity(){
+
+    const container=
+        document.getElementById(
+            "activityList"
+        );
+
+
+    if(!activities.length){
+
+        container.innerHTML=
+            `
+            <div class="activity-empty">
+                No activity yet.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    container.innerHTML=
+        activities.map(item=>`
+
+            <div class="coin">
+
+                <div>
+
+                    <div class="coin-name">
+                        ${item.type}
+                    </div>
+
+                    <div class="coin-symbol">
+                        ${item.time}
+                    </div>
+
+                </div>
+
+                <div class="coin-price">
+                    ${money(item.amount)}
+                </div>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+function openAdmin(){
+
+    document.getElementById(
+        "modal"
+    ).innerHTML=`
+
+        <h2>Demo Admin Panel</h2>
+
+        <p style="
+            color:var(--muted);
+            margin:8px 0 15px;
+            line-height:1.5;
+        ">
+            Local simulation controls only.
+            These funds have no real-world value.
+        </p>
+
+        <input
+            id="adminCode"
+            class="input"
+            type="password"
+            placeholder="Admin code">
+
+        <button
+            class="primary"
+            onclick="unlockAdmin()">
+            Unlock
+        </button>
+
+        <button
+            class="close"
+            onclick="closeModal()">
+            Cancel
+        </button>
+
+    `;
+
+
+    openModal();
+
+}
+
+
+function unlockAdmin(){
+
+    if(
+        document.getElementById(
+            "adminCode"
+        ).value!==ADMIN_CODE
+    ){
+
+        toast(
+            "Invalid demo admin code."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "modal"
+    ).innerHTML=`
+
+        <h2>Demo Admin</h2>
+
+        <div class="admin-box">
+
+            <div class="label">
+                Current wallet balance
+            </div>
+
+            <div class="admin-balance">
+                ${money(getBalance())}
+            </div>
+
+            <input
+                id="adminAmount"
+                class="input"
+                type="number"
+                min="0"
+                placeholder="Amount">
+
+            <div class="admin-buttons">
+
+                <button
+                    class="admin-btn add"
+                    onclick="adminAdd()">
+                    + Add
+                </button>
+
+                <button
+                    class="admin-btn remove"
+                    onclick="adminRemove()">
+                    − Remove
+                </button>
+
+                <button
+                    class="admin-btn set"
+                    onclick="adminSet()">
+                    Set Balance
+                </button>
+
+            </div>
+
+        </div>
+
+        <button
+            class="close"
+            onclick="closeModal()">
+            Done
+        </button>
+
+    `;
+
+}
+
+
+function adminAmount(){
+
+    return Number(
+        document.getElementById(
+            "adminAmount"
+        ).value
+    );
+
+}
+
+
+function adminAdd(){
+
+    const amount=adminAmount();
+
+
+    if(!amount||amount<=0){
+
+        toast(
+            "Enter an amount."
+        );
+
+        return;
+
+    }
+
+
+    setBalance(
+        getBalance()+amount
+    );
+
+
+    addActivity(
+        "Demo funds added",
+        amount
+    );
+
+
+    unlockAdmin();
+
+    toast(
+        `${money(amount)} added.`
+    );
+
+}
+
+
+function adminRemove(){
+
+    const amount=adminAmount();
+
+
+    if(
+        !amount||
+        amount<=0||
+        amount>getBalance()
+    ){
+
+        toast(
+            "Invalid amount."
+        );
+
+        return;
+
+    }
+
+
+    setBalance(
+        getBalance()-amount
+    );
+
+
+    addActivity(
+        "Demo funds removed",
+        amount
+    );
+
+
+    unlockAdmin();
+
+    toast(
+        `${money(amount)} removed.`
+    );
+
+}
+
+
+function adminSet(){
+
+    const amount=adminAmount();
+
+
+    if(
+        !Number.isFinite(amount)||
+        amount<0
+    ){
+
+        toast(
+            "Invalid amount."
+        );
+
+        return;
+
+    }
+
+
+    setBalance(amount);
+
+
+    addActivity(
+        "Demo balance set",
+        amount
+    );
+
+
+    unlockAdmin();
+
+    toast(
+        "Balance updated."
+    );
+
+}
+
+
+/* =========================================================
+   SEND / RECEIVE
+========================================================= */
+
+function openSend(){
+
+    document.getElementById(
+        "modal"
+    ).innerHTML=`
+
+        <h2>Send</h2>
+
+        <input
+            class="input"
+            placeholder="Demo wallet address">
+
+        <input
+            id="sendAmount"
+            class="input"
+            type="number"
+            placeholder="USD amount">
+
+        <button
+            class="primary"
+            onclick="sendDemo()">
+            Send Demo Funds
+        </button>
+
+        <button
+            class="close"
+            onclick="closeModal()">
+            Cancel
+        </button>
+
+    `;
+
+
+    openModal();
+
+}
+
+
+function sendDemo(){
+
+    const amount=
+        Number(
+            document.getElementById(
+                "sendAmount"
+            ).value
+        );
+
+
+    if(
+        !amount||
+        amount<=0||
+        amount>getBalance()
+    ){
+
+        toast(
+            "Invalid amount."
+        );
+
+        return;
+
+    }
+
+
+    setBalance(
+        getBalance()-amount
+    );
+
+
+    addActivity(
+        "Demo funds sent",
+        amount
+    );
+
+
+    closeModal();
+
+    toast(
+        "Demo transfer completed."
+    );
+
+}
+
+
+function openReceive(){
+
+    const address=
+        "DEMO7PhantomWalletExample";
+
+
+    document.getElementById(
+        "modal"
+    ).innerHTML=`
+
+        <h2>Receive</h2>
+
+        <p style="
+            color:var(--muted);
+            margin:8px 0;
+        ">
+            Demo wallet address
+        </p>
+
+        <div
+            class="panel"
+            style="
+                text-align:center;
+                word-break:break-all;
+            ">
+
+            ${address}
+
+        </div>
+
+        <button
+            class="primary"
+            onclick="
+                navigator.clipboard?.writeText('${address}');
+                toast('Address copied.')
+            ">
+
+            Copy Address
+
+        </button>
+
+        <button
+            class="close"
+            onclick="closeModal()">
+
+            Done
+
+        </button>
+
+    `;
+
+
+    openModal();
+
+}
+
+
+/* =========================================================
+   MODAL / TOAST
+========================================================= */
+
+function openModal(){
+
+    document
+        .getElementById("overlay")
+        .classList.add("show");
+
+}
+
+
+function closeModal(){
+
+    document
+        .getElementById("overlay")
+        .classList.remove("show");
+
+}
+
+
+let toastTimer;
+
+
+function toast(message){
+
+    const element=
+        document.getElementById(
+            "toast"
+        );
+
+
+    element.textContent=message;
+
+    element.classList.add("show");
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer=
+        setTimeout(()=>{
+
+            element.classList.remove(
+                "show"
+            );
+
+        },2400);
+
+}
+
+
+/* =========================================================
+   PORTFOLIO CHART
+========================================================= */
+
+function drawPortfolioChart(){
+
+    const canvas=
+        document.getElementById(
+            "portfolioChart"
+        );
+
+
+    if(!canvas)return;
+
+
+    const width=
+        canvas.clientWidth;
+
+    const height=
+        canvas.clientHeight;
+
+    const ratio=
+        devicePixelRatio||1;
+
+
+    canvas.width=
+        width*ratio;
+
+    canvas.height=
+        height*ratio;
+
+
+    const ctx=
+        canvas.getContext("2d");
+
+
+    ctx.setTransform(
+        ratio,0,0,ratio,0,0
+    );
+
+
+    let value=100;
+    const data=[];
+
+
+    for(let i=0;i<80;i++){
+
+        value+=
+            (
+                Math.random()-.46
+            )*1.15;
+
+        data.push(value);
+
+    }
+
+
+    const min=Math.min(...data);
+    const max=Math.max(...data);
+
+
+    ctx.beginPath();
+
+
+    data.forEach((v,i)=>{
+
+        const x=
+            i/(data.length-1)*
+            width;
+
+
+        const y=
+            height-
+            ((v-min)/(max-min||1))*
+            height*.75-
+            height*.1;
+
+
+        if(i===0)
+            ctx.moveTo(x,y);
+        else
+            ctx.lineTo(x,y);
+
+    });
+
+
+    ctx.strokeStyle="#a879ff";
+    ctx.lineWidth=2.5;
+    ctx.lineCap="round";
+
+    ctx.shadowBlur=8;
+    ctx.shadowColor="#8c5cff";
+
+    ctx.stroke();
+
+}
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
+
+        updateUI();
+        renderMarket();
+        drawPortfolioChart();
+
+    }
+);
+
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        drawPortfolioChart();
+
+        coins.forEach(
+            coin=>{
+                drawSmallChart(coin);
+            }
+        );
+
+
+        if(selectedCoin){
+
+            drawMainChart();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+
+
+
